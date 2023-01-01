@@ -20,19 +20,19 @@ async function run() {
         await client.connect();
         const productCollection = client.db('warehouseManagement').collection('inventory');
 
-        app.get('/banner', async (req, res) => {
-            const query = {};
-            const cursor = bannerCollection.find(query);
-            const result = await cursor.toArray();
-            console.log(result)
-            res.send(result)
-        })
+
 
         app.get('/inventory', async (req, res) => {
             const query = {};
             const cursor = productCollection.find(query);
             const result = await cursor.toArray();
-            // console.log(result)
+            res.send(result)
+        })
+
+        app.get('/inventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.findOne(query);
             res.send(result)
         })
     }
