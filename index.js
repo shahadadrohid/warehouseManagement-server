@@ -22,6 +22,8 @@ async function run() {
 
         const bannerCollection = client.db('warehouseManagement').collection('banner');
 
+        const sellersCollection = client.db('warehouseManagement').collection('topsellers')
+
         app.get('/banner', async (req, res) => {
             const query = {};
             const cursor = bannerCollection.find(query);
@@ -31,12 +33,15 @@ async function run() {
         })
 
         app.get('/inventory', async (req, res) => {
-            const query = {};
+            const email = req.query.email;
+            let query = {}
+            if (email) {
+                query = { email: email }
+            }
             const cursor = productCollection.find(query);
             const result = await cursor.toArray();
             res.send(result)
         })
-
         app.get('/inventory/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -73,6 +78,12 @@ async function run() {
             const result = await productCollection.insertOne(newItem);
             console.log(result)
             res.send(result)
+        })
+        app.get('/topsellers', async (req, res) => {
+            const query = {};
+            const cursor = sellersCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
         })
     }
     catch {
