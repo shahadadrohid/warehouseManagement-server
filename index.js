@@ -35,7 +35,7 @@ async function run() {
         app.get('/inventory', async (req, res) => {
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
-            console.log(req.query)
+            
             const email = req.query.email;
             let query = {}
             if (email) {
@@ -46,8 +46,11 @@ async function run() {
             if (page || size) {
                 result = await cursor.skip(page * size).limit(size).toArray();
             }
-            else {
+            else if(email) {
                 result = await cursor.toArray();
+            }
+            else {
+                result = await cursor.limit(3).toArray();
             }
             res.send(result)
         })
