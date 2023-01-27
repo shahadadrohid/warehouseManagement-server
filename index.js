@@ -33,14 +33,29 @@ async function run() {
         })
 
         app.get('/inventory', async (req, res) => {
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+            console.log(req.query)
             const email = req.query.email;
             let query = {}
             if (email) {
                 query = { email: email }
             }
             const cursor = productCollection.find(query);
-            const result = await cursor.toArray();
+            let result;
+            if (page || size) {
+                result = await cursor.skip(page * size).limit(size).toArray();
+            }
+            else {
+                result = await cursor.toArray();
+            }
             res.send(result)
+        })
+        app.get('/productCount', async (req, res) => {
+            const query = {};
+            const cursor = productCollection.find(query);
+            const count = await cursor.count();
+            res.send({ count });
         })
         app.get('/inventory/:id', async (req, res) => {
             const id = req.params.id;
